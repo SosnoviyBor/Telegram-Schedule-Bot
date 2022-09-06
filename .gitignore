@@ -1,3 +1,7 @@
+# Secure data files
+config_local.py
+db.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
