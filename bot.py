@@ -27,21 +27,27 @@ tmp_names = []
 for row in cur:
     tmp_ids.append(row[0])
     tmp_names.append(row[1])
-ALL_SELECTIVE_CLASSES = {"ids": tmp_ids,
-               "names": tmp_names}
+ALL_SC = {"ids": tmp_ids,
+          "names": tmp_names}
 ALL_GROUPS = ["IT01", "IT02", "IT03", "IT04"]
 
 @dp.message_handler(commands=['start', 'help'])
 async def start(message: Message):
-    if message.from_id not in []:
+    #cur = conn.execute(f"")
+    if message.from_id not in [] or message.from_id in config.admins:
         ikm = InlineKeyboardMarkup(row_width=4)
         for group in ALL_GROUPS:
             ikm.add(InlineKeyboardButton(text=group, callback_data=group))
         await message.reply("З якої ти групи?", reply_markup=ikm)
     else:
-        await message.reply(
-            "/help - повідомлення із списком команд"
-        )
+        help(message)
+
+@dp.message_handler(commands=['help'])
+async def help(message: Message):
+    await message.reply(
+        "/help - повідомлення із списком команд"
+    )
+    return
 
 @dp.message_handler()
 async def plain_text(message: Message):
@@ -51,17 +57,18 @@ async def plain_text(message: Message):
 async def callback(query: CallbackQuery):
     # Register user in bot
     if query.data in ALL_GROUPS:
-        # TODO. Add user to DB
+        conn.execute("INSERT INTO users (user_id, name, 'group') "+
+                    f"VALUES({query.from_user.id},'{query.from_user.username}','{query.data}')")
+        conn.commit()
         await bot.send_message(query.from_user.id, parse_mode="markdown", text=
             "Тепер треба обрати свої вибіркові предмети\n"
             "Передивитися свої предмети можна у [ф-каталозі](https://my.kpi.ua/)"
         )
         msg_text = ""
         ikm = InlineKeyboardMarkup(row_width=5)
-        for i in range(len(ALL_SELECTIVE_CLASSES["ids"])):
-            msg_text += f"{ALL_SELECTIVE_CLASSES['ids'][i]}. {ALL_SELECTIVE_CLASSES['names'][i]}\n"
-            ikm.add(InlineKeyboardButton(text=ALL_SELECTIVE_CLASSES['ids'][i], callback_data="a"))
-            pass
+        for i in range(len(ALL_SC["ids"])):
+            msg_text += f"{ALL_SC['ids'][i]}. {ALL_SC['names'][i]}\n"
+            ikm.add(InlineKeyboardButton(text=ALL_SC['ids'][i], callback_data="a"))
         await bot.send_message(query.from_user.id, text=msg_text, reply_markup=ikm)
     return
 
