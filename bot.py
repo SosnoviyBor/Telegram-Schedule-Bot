@@ -1,6 +1,7 @@
 from ast import parse
 from email import message
 import sqlite3 as sql
+from subprocess import call
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import *
 import asyncio
@@ -63,9 +64,9 @@ async def help(message: Message):
     )
 
 @dp.message_handler(commands=['my_selecs'])
-async def my_selecs(message: Message):
+async def my_selecs(message: Message, edit_flag=False):
     cur = conn.execute("SELECT selec_class1, selec_class2, selec_class3 "+
-                      f"FROM users WHERE id = {message.from_id}")
+                      f"FROM users WHERE id = {message.from_id if not edit_flag else message.chat.id}")
     picked_classes = []
     for i in cur:
         picked_classes += i
@@ -74,11 +75,14 @@ async def my_selecs(message: Message):
             InlineKeyboardButton(text=f"2. {'❌' if picked_classes[1] is None else '✅'}", callback_data="my_selecs view 2 0"),
             InlineKeyboardButton(text=f"3. {'❌' if picked_classes[2] is None else '✅'}", callback_data="my_selecs view 3 0"))
     msg_text = "Ваші вибіркові предмети наступні:\n\n"\
-            f"1. <code>{picked_classes[0] if picked_classes[0] is not None else 'Відсутній'}</code>\n"\
-            f"2. <code>{picked_classes[1] if picked_classes[1] is not None else 'Відсутній'}</code>\n"\
-            f"3. <code>{picked_classes[2] if picked_classes[2] is not None else 'Відсутній'}</code>\n\n"\
+            f"1. <code>{ALL_SC['name'][picked_classes[0]] if picked_classes[0] is not None else 'Відсутній'}</code>\n"\
+            f"2. <code>{ALL_SC['name'][picked_classes[0]] if picked_classes[1] is not None else 'Відсутній'}</code>\n"\
+            f"3. <code>{ALL_SC['name'][picked_classes[0]] if picked_classes[2] is not None else 'Відсутній'}</code>\n\n"\
             "Переглянути свої предмети можна у <b><a href='https://my.kpi.ua/'>ф-каталозі</a></b>"
-    await message.reply(msg_text, reply_markup=ikm, parse_mode=ParseMode.HTML)
+    if edit_flag:
+        await message.edit_text(msg_text, reply_markup=ikm, parse_mode=ParseMode.HTML)
+    else:
+        await message.reply(msg_text, reply_markup=ikm, parse_mode=ParseMode.HTML)
 
 @dp.message_handler(commands=['logoff'])
 async def logoff(message: Message):
@@ -99,9 +103,15 @@ async def plain_text(message: Message):
 @dp.callback_query_handler()
 async def callback(query: CallbackQuery):
     command = query.data.split()
+    # general helper
+    # Used in case if I need to call any function after pressing inline button
+    if command[0] == "func":
+        # <func_name> <args>
+        if command[1] == "my_selecs":
+            await my_selecs(query.message, bool(command[2]))
     # /register helper
     # Register user in bot
-    if command[0] == "register":
+    elif command[0] == "register":
         conn.execute("INSERT INTO users (id, name, 'group') "
                     f"VALUES({query.from_user.id},'{query.from_user.username}','{command[1]}')")
         conn.commit()
@@ -122,8 +132,8 @@ async def callback(query: CallbackQuery):
     elif command[0] == "my_selecs":
         # my_selecs view <slot> <page>
         if command[1] == "view":
-            command[2] = int(command[2])
-            command[3] = int(command[3])
+            command[2] = int(command[2])    # slot
+            command[3] = int(command[3])    # page
             cur = conn.execute("SELECT selec_class1, selec_class2, selec_class3 "+
                             f"FROM users WHERE id = {query.from_user.id}")
             picked_classes = []
@@ -132,14 +142,15 @@ async def callback(query: CallbackQuery):
 
             ikm = InlineKeyboardMarkup(row_width=5)
             button_row1, button_row2 = [], []
-            msg_text = ""
+            picked_class_curr = 'Ще не вибрано' if picked_classes[command[2]-1] == None else ALL_SC['name'][int(picked_classes[command[2]-1])]
+            msg_text = f"Предмет №{command[2]}:  <code>{picked_class_curr}</code>\n\n"
             for rel_id in range(10):           # sc id on page
                 abs_id = rel_id+1*command[3]   # sc id in ALL_SC
                 if abs_id > len(ALL_SC['id'])-1:
                     break
-                if ALL_SC['id'][abs_id] in picked_classes:
-                    msg_text += f"<s><b>{rel_id+1}.</b> {ALL_SC['name'][abs_id]}</s>. Ви вже вибрали цей предмет\n"
-                    button = InlineKeyboardButton(text="*️⃣")
+                if ALL_SC['id'][abs_id]-1 in picked_classes:
+                    msg_text += f"<s><b>{rel_id+1}.</b> {ALL_SC['name'][abs_id]}</s>\n"
+                    button = InlineKeyboardButton(text="*️⃣", callback_data="a")
                 else:
                     msg_text += f"<b>{rel_id+1}.</b> {ALL_SC['name'][abs_id]}\n"
                     button = InlineKeyboardButton(text=u.int2emoji[rel_id+1],
@@ -153,21 +164,29 @@ async def callback(query: CallbackQuery):
 
             button_row3 = []
             prev_page = command[3] if command[3]-1 >= 0 else 0
+            go_back = "func my_selecs True"
             next_page = command[3] if command[3]+1 >= len(ALL_SC['id'])//10 else len(ALL_SC['id'])//10
             button_row3.append(InlineKeyboardButton(text="⬅️", callback_data=f"my_selecs view {command[2]} {prev_page}"))
+            button_row3.append(InlineKeyboardButton(text="❌", callback_data=go_back))
             button_row3.append(InlineKeyboardButton(text="➡️", callback_data=f"my_selecs view {command[2]} {next_page}"))
             ikm.add(*button_row3)
 
-            # TODO make message edit for new pages
-            await bot.send_message(query.from_user.id, text=msg_text, parse_mode=ParseMode.HTML, reply_markup=ikm)
+            await bot.edit_message_text(chat_id=query.message.chat.id, message_id=query.message.message_id,
+                                        text=msg_text, parse_mode=ParseMode.HTML, reply_markup=ikm)
         # my_selecs set <slot> <sc_id>
         elif command[1] == "set":
-            pass
+            conn.execute(f"UPDATE users\
+                           SET selec_class{command[2]} = {int(command[3])-1}\
+                           WHERE id = {query.from_user.id}")
+            conn.commit()
+            query.data = "func my_selecs True"
+            await callback(query)
 
 
 
 # Saved for future
 async def on_startup(_):
+    return
     asyncio.create_task(scheduler())
 
 async def scheduler():
