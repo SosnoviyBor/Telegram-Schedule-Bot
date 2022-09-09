@@ -1,0 +1,7 @@
+import sys
+sys.path.append("./commands")
+
+from c_start import *
+from c_help import *
+from c_my_selecs import *
+from c_logoff import *

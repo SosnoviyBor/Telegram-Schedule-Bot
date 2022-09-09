@@ -21,8 +21,11 @@ async def my_selecs(query: CallbackQuery, command):
 
         ikm = InlineKeyboardMarkup(row_width=5)
         button_row1, button_row2 = [], []
-        picked_class_curr = 'Ще не вибрано' if picked_classes[command[2]-1] == None else ALL_SC['name'][int(picked_classes[command[2]-1])]
-        msg_text = f"Предмет №{command[2]}:  <code>{picked_class_curr}</code>\n\n"
+        if picked_classes[command[2]-1] == None:
+            picked_class_curr = 'Ще не вибрано ❌'
+        else:
+            picked_class_curr = f"<u>{ALL_SC['name'][int(picked_classes[command[2]-1])]}</u> ✅"
+        msg_text = f"Предмет №{command[2]}:  {picked_class_curr}\n\n"
         for rel_id in range(10):           # sc id on page
             abs_id = rel_id+1*command[3]   # sc id in ALL_SC
             if abs_id > len(ALL_SC['id'])-1:

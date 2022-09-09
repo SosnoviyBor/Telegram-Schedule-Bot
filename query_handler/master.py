@@ -1,6 +1,6 @@
 import sys
 sys.path.append("./query_handler")
 
-from my_selecs import *
-from logoff import *
-from register import *
+from q_my_selecs import *
+from q_logoff import *
+from q_start import *

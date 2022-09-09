@@ -7,7 +7,7 @@ from bot import bot
 from db import conn
 from utils.consts import *
 
-async def register (query: CallbackQuery, command):
+async def start(query: CallbackQuery, command):
     conn.execute("INSERT INTO users (id, name, 'group') "
                     f"VALUES({query.from_user.id},'{query.from_user.username}','{command[1]}')")
     conn.commit()
