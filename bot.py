@@ -1,6 +1,3 @@
-from email import message
-from multiprocessing import parent_process
-from tokenize import group
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import *
 import asyncio
@@ -16,7 +13,11 @@ try:
     import config_local as config
 except:
     import config
+
+# TODO. Delete on release
 from utils.get_schedule import *
+from utils.str_utils import *
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.token)
@@ -44,7 +45,13 @@ async def logoff(message: Message):
 async def my_schedule(message: Message):
     await c.my_schedule(message)
 
+@dp.message_handler(commands=['today'])
+async def today(message: Message):
+    await c.today(message)
 
+@dp.message_handler(commands=['tomorrow'])
+async def tomorrow(message: Message):
+    await c.tomorrow(message)
 
 """ ########################################## Callback query handler ########################################## """
 

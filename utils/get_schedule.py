@@ -2,6 +2,14 @@ from aiogram.types import *
 from db import *
 
 def get_schedule(message: Message):
+    """
+    Returns next type of dictionary\n
+    schedule {
+        week : {
+            day : [pair, name, type, link]
+        }
+    }
+    """
     classes = {
         "week1":{
             1:[], # day starting from monday
