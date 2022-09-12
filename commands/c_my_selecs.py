@@ -7,7 +7,7 @@ from utils.consts import *
 from db import conn
 import utils.str_utils as su
 
-async def my_selecs(message, edit_flag):
+async def my_selecs(message: Message, edit_flag:bool):
     cur = conn.execute("SELECT selec_class1, selec_class2, selec_class3 "+
                       f"FROM users WHERE id = {message.from_id if not edit_flag else message.chat.id}")
     picked_classes = []

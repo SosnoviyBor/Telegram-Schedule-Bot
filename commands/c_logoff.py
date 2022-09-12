@@ -5,7 +5,7 @@ from aiogram.types import *
 
 from db import conn
 
-async def logoff(message):
+async def logoff(message: Message):
     cur = conn.execute("SELECT id FROM users")
     users = []
     for user in cur:

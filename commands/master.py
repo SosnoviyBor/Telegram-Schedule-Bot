@@ -5,3 +5,4 @@ from c_start import *
 from c_help import *
 from c_my_selecs import *
 from c_logoff import *
+from c_my_schedule import *

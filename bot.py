@@ -1,3 +1,6 @@
+from email import message
+from multiprocessing import parent_process
+from tokenize import group
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import *
 import asyncio
@@ -6,12 +9,15 @@ import logging
 
 import commands.master as c
 import query_handler.master as qh
+import acl
+from db import *
 from utils.consts import *
-
 try:
     import config_local as config
 except:
     import config
+from utils.get_schedule import *
+
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.token)
 dp = Dispatcher(bot)
@@ -33,6 +39,12 @@ async def my_selecs(message: Message, edit_flag=False):
 @dp.message_handler(commands=['logoff'])
 async def logoff(message: Message):
     await c.logoff(message)
+
+@dp.message_handler(commands=['my_schedule'])
+async def my_schedule(message: Message):
+    await c.my_schedule(message)
+
+
 
 """ ########################################## Callback query handler ########################################## """
 

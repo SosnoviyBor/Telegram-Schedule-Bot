@@ -8,7 +8,7 @@ from db import conn
 
 from c_help import help
 
-async def start(message):
+async def start(message: Message):
     cur = conn.execute(f"SELECT id FROM users")
     reg_users = []
     for i in cur:
