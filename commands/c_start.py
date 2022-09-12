@@ -18,7 +18,7 @@ async def start(message: Message):
         ikm = InlineKeyboardMarkup(row_width=4)
         for group in ALL_GROUPS:
             ikm.add(InlineKeyboardButton(text=group, callback_data=f"start {group}"))
-        await message.reply("З якої ти групи?", reply_markup=ikm)
+        await message.answer("З якої ти групи?", reply_markup=ikm)
     # If the user is already in system
     else:
         await message.answer("Ви вже зареєстровані, тому перенаправляю вас на повідомлення із командами 😉")

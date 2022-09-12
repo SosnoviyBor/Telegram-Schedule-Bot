@@ -4,6 +4,7 @@ sys.path.append("../Telegram-Schedule-Bot")
 from aiogram.types import *
 
 from utils.consts import *
+import acl
 
 async def help(message: Message):
     msg_text = "/start - зареєструватися у боті. Якщо ви вже зареєстровані, то працює як наступна команда"\
@@ -14,4 +15,4 @@ async def help(message: Message):
     if acl.check_access_admin(message):
         msg_text += "\n\n ##### Команди адміністратора #####"\
                     "\n/reload - оновлює з'єднання боту із БД у рантаймі"   # is needed?
-    await message.reply(msg_text)
+    await message.answer(msg_text)

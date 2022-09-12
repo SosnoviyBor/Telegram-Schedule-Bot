@@ -25,4 +25,4 @@ async def my_selecs(message: Message, edit_flag:bool):
     if edit_flag:
         await message.edit_text(msg_text, reply_markup=ikm, parse_mode=ParseMode.HTML)
     else:
-        await message.reply(msg_text, reply_markup=ikm, parse_mode=ParseMode.HTML)
+        await message.answer(msg_text, reply_markup=ikm, parse_mode=ParseMode.HTML)
