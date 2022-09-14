@@ -15,8 +15,7 @@ except:
     import config
 
 # TODO. Delete on release
-from utils.get_schedule import *
-from utils.str_utils import *
+from utils.funcs import *
 from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
@@ -39,6 +38,7 @@ async def my_selecs(message: Message, edit_flag=False):
 
 @dp.message_handler(commands=['logoff'])
 async def logoff(message: Message):
+    # TODO in subfunction
     await c.logoff(message)
 
 @dp.message_handler(commands=['my_schedule'])

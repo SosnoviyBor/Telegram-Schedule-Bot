@@ -6,7 +6,6 @@ from aiogram.types import *
 from bot import bot, callback
 from db import conn
 from utils.consts import *
-import utils.str_utils as su
 
 async def my_selecs(query: CallbackQuery, command):
     # my_selecs view <slot> <page>
@@ -35,7 +34,7 @@ async def my_selecs(query: CallbackQuery, command):
                 button = InlineKeyboardButton(text="*️⃣", callback_data="a")
             else:
                 msg_text += f"<b>{rel_id+1}.</b> {ALL_SC['name'][abs_id]}\n"
-                button = InlineKeyboardButton(text=su.int2emoji[rel_id+1],
+                button = InlineKeyboardButton(text=INT2EMOJI[rel_id+1],
                                             callback_data=f"my_selecs set {command[2]} {ALL_SC['id'][abs_id]}")  # my_selecs set <slot> <sc_id>
             if rel_id < 5:
                 button_row1.append(button)

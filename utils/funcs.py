@@ -1,5 +1,15 @@
 from aiogram.types import *
+from datetime import datetime
+
 from db import *
+from utils.consts import *
+
+# You may need to swap return values' places depending on the year
+def get_week():
+    if datetime.date(datetime(2010, 6, 16)).isocalendar().week % 2 == 1:
+        return "week1"
+    else:
+        return "week2"
 
 def get_schedule(message: Message):
     """
@@ -13,7 +23,7 @@ def get_schedule(message: Message):
     classes = {
         "week1":{
             1:[], # day starting from monday
-            2:[], # contains [pair, name, type, link]
+            2:[],
             3:[],
             4:[],
             5:[]
@@ -44,7 +54,7 @@ def get_schedule(message: Message):
                         "INNER JOIN classes c ON g.class_id = c.id")
     for row in cur:
         classes[row[0]][row[1]].append([row[2], row[3], row[4], row[5]])
-    
+    # Sorting classes in each day by order
     for week in classes.keys():
         for day in classes[week].keys():
             classes[week][day].sort(key=lambda x: x[0])
