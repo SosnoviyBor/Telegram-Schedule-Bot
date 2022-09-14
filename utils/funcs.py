@@ -11,12 +11,12 @@ def get_week():
     else:
         return "week2"
 
-def get_schedule(message: Message):
+def get_schedule(id: int):
     """
     Returns next type of dictionary\n
     schedule {
         week : {
-            day : [pair, name, type, link]
+            day : [ [pair, name, type, link], ...]
         }
     }
     """
@@ -37,7 +37,7 @@ def get_schedule(message: Message):
     }
     # Adding selective classes
     cur = conn.execute("SELECT group_name, selec_class1, selec_class2, selec_class3 "\
-                        f"FROM users WHERE id = {message.from_user.id}")
+                        f"FROM users WHERE id = {id}")
     row = cur.fetchone()
     for value in row:
         if type(value) is int:

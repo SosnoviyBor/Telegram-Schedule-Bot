@@ -78,18 +78,33 @@ async def callback(query: CallbackQuery):
 
 
 
-# Saved for future
 async def on_startup(_):
-    return
     asyncio.create_task(scheduler())
 
 async def scheduler():
-    aioschedule.every().day.at("8:00").do()
+    aioschedule.every().day.at("8:25").do(remind)
+    aioschedule.every().day.at("10:20").do(remind)
+    aioschedule.every().day.at("12:15").do(remind)
+    aioschedule.every().day.at("14:10").do(remind)
+    aioschedule.every().day.at("16:05").do(remind)
+
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
 
-
+async def remind():
+    week = get_week()
+    day = datetime.today().weekday()+1
+    pair = PAIRS[datetime.now().hour]
+    cur = conn.execute("SELECT id FROM users")
+    for id in cur.fetchall()[0]:
+        sched = get_schedule(id)
+        for c in sched[week][day]:
+            if c[0] == pair:
+                msg_text = "Через 5 хвилин почнеться пара\n"\
+                        f"{pair}. <a href='{c[3]}'>{c[1]} ({c[2]})</a>"
+                await bot.send_message(chat_id=id, text=msg_text, parse_mode=ParseMode.HTML)
+                break
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

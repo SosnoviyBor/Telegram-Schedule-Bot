@@ -6,7 +6,7 @@ from utils.consts import *
 from utils.funcs import *
 
 async def my_schedule(message: Message):
-    classes = get_schedule(message)
+    classes = get_schedule(message.from_user.id)
     msg_text = ""
     for week in classes.keys():
         if week == "week1":

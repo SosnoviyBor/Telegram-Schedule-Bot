@@ -17,7 +17,7 @@ async def tomorrow(message: Message):
         msg_text = "<code>1 неділя</code>\n"
     else:
         msg_text = "<code>2 неділя</code>\n"
-    schedule = get_schedule(message)
+    schedule = get_schedule(message.from_user.id)
     msg_text += f"<b>{DAYS[day]}</b>\n"
     for c in schedule[week][day]:
         msg_text += f"{c[0]}. <a href='{c[3]}'>{c[1]} ({c[2]})</a>\n"
