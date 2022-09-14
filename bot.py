@@ -38,7 +38,6 @@ async def my_selecs(message: Message, edit_flag=False):
 
 @dp.message_handler(commands=['logoff'])
 async def logoff(message: Message):
-    # TODO in subfunction
     await c.logoff(message)
 
 @dp.message_handler(commands=['my_schedule'])
