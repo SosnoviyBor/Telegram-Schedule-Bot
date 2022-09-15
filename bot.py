@@ -61,7 +61,7 @@ async def callback(query: CallbackQuery):
     # Used in case if I need to call any function after pressing inline button
     if command[0] == "func":
         # <func_name> <args>
-        if command[1] == "my_selecs":
+        if command[1] == "set_selecs":
             await set_selecs(query.message, bool(command[2]))
     # /start helper
     # Register user in bot
@@ -73,8 +73,8 @@ async def callback(query: CallbackQuery):
         await qh.logoff(query, command)
     # /my_selecs helper
     # Set selective classes for yourself
-    elif command[0] == "my_selecs":
-        await qh.my_selecs(query, command)
+    elif command[0] == "set_selecs":
+        await qh.set_selecs(query, command)
 
 
 
@@ -110,7 +110,7 @@ async def remind():
 
 if __name__ == '__main__':
     # TODO
-    # add functionality to ignore certain class
+    # add functionality to ignore certain class (depending on week, day and pair)
     # admin ability to send global messages
     # ask for ideas for admin commands
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

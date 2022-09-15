@@ -14,7 +14,7 @@ async def help(message: Message):
              "\n/tomorrow - перегляд розкладу на завтра (або наступний навчальній день, якщо завтра вихідний)"\
              "\n/set_selecs - перегляд та вибір своїх вибіркових предметів"\
              "\n/logoff - видалити себе із боту"
-    if acl.check_access_admin(message):
+    if acl.is_admin(message):
         msg_text += "\n\n ##### Команди адміністратора #####"\
                     "\n/say - відправити повідомлення усім користувачам"
     await message.answer(msg_text)
