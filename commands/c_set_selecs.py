@@ -6,7 +6,7 @@ from aiogram.types import *
 from utils.consts import *
 from db import conn
 
-async def my_selecs(message: Message, edit_flag:bool):
+async def set_selecs(message: Message, edit_flag:bool):
     cur = conn.execute("SELECT selec_class1, selec_class2, selec_class3 "+
                       f"FROM users WHERE id = {message.from_id if not edit_flag else message.chat.id}")
     picked_classes = []

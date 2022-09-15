@@ -32,17 +32,17 @@ async def start(message: Message):
 async def help(message: Message):
     await c.help(message)
 
-@dp.message_handler(commands=['my_selecs'])
-async def my_selecs(message: Message, edit_flag=False):
-    await c.my_selecs(message, edit_flag)
+@dp.message_handler(commands=['set_selecs'])
+async def set_selecs(message: Message, edit_flag=False):
+    await c.set_selecs(message, edit_flag)
 
 @dp.message_handler(commands=['logoff'])
 async def logoff(message: Message):
     await c.logoff(message)
 
-@dp.message_handler(commands=['my_schedule'])
-async def my_schedule(message: Message):
-    await c.my_schedule(message)
+@dp.message_handler(commands=['schedule'])
+async def schedule(message: Message):
+    await c.schedule(message)
 
 @dp.message_handler(commands=['today'])
 async def today(message: Message):
@@ -62,7 +62,7 @@ async def callback(query: CallbackQuery):
     if command[0] == "func":
         # <func_name> <args>
         if command[1] == "my_selecs":
-            await my_selecs(query.message, bool(command[2]))
+            await set_selecs(query.message, bool(command[2]))
     # /start helper
     # Register user in bot
     elif command[0] == "start":
@@ -95,6 +95,8 @@ async def scheduler():
 async def remind():
     week = get_week()
     day = datetime.today().weekday()+1
+    if day in [1,6,7]:
+        return
     pair = PAIRS[datetime.now().hour]
     cur = conn.execute("SELECT id FROM users")
     for id in cur.fetchall()[0]:
@@ -107,4 +109,8 @@ async def remind():
                 break
 
 if __name__ == '__main__':
+    # TODO
+    # add functionality to ignore certain class
+    # admin ability to send global messages
+    # ask for ideas for admin commands
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

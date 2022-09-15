@@ -5,13 +5,13 @@ except:
     import config
 
 # check if it is direct chat (not a group chat)
-def check_access_direct(message: Message):
+def is_dm(message: Message):
     if message.from_user.id == message.chat.id:
         return True
     return False
 
 # check if it is message from admin
-def check_access_admin(message: Message):
+def is_admin(message: Message):
     if message.from_user.id in config.admins:
         return True
     return False

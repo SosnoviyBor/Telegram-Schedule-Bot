@@ -12,5 +12,5 @@ async def start(query: CallbackQuery, command):
                     f"VALUES({query.from_user.id},'{query.from_user.username}','{command[1]}')")
     conn.commit()
     msg_text = "Тепер треба обрати свої вибіркові предмети\n"\
-                "Для цього використайте команду <b>/my_selecs</b>"
+                "Для цього використайте команду <b>/set_selecs</b>"
     await bot.send_message(query.from_user.id, parse_mode=ParseMode.HTML, text=msg_text)

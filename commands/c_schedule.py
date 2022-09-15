@@ -5,7 +5,7 @@ from aiogram.types import *
 from utils.consts import *
 from utils.funcs import *
 
-async def my_schedule(message: Message):
+async def schedule(message: Message):
     classes = get_schedule(message.from_user.id)
     msg_text = ""
     for week in classes.keys():
@@ -18,4 +18,4 @@ async def my_schedule(message: Message):
             msg_text += f"<b>{DAYS[day]}</b>\n"
             for i in classes[week][day]:
                 msg_text += f"{i[0]}. <a href='{i[3]}'>{i[1]} ({i[2]})</a>\n"
-    await message.answer(text=msg_text, parse_mode=ParseMode.HTML)
+    await message.answer(text=msg_text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
