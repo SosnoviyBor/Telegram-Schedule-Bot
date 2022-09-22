@@ -1,4 +1,5 @@
 from aiogram.types import *
+from db import conn
 try:
     import config_local as config
 except:
