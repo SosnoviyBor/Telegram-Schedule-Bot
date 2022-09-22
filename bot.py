@@ -1,3 +1,4 @@
+from email import message
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import *
 import asyncio
@@ -53,6 +54,10 @@ async def today(message: Message):
 async def tomorrow(message: Message):
     await c.tomorrow(message)
 
+@dp.message_handler(acl.is_registered, commands=['set_ignored'])
+async def set_ignored(message: Message, edit_flag=False):
+    await c.set_ignored(message)
+
 """ ########################################## Callback query handler ########################################## """
 
 @dp.callback_query_handler()
@@ -63,7 +68,9 @@ async def callback(query: CallbackQuery):
     if command[0] == "func":
         # <func_name> <args>
         if command[1] == "set_selecs":
-            await set_selecs(query.message, bool(command[2]))
+            await c.set_selecs(query.message, bool(command[2]))
+        if command[1] == "set_ignored":
+            await c.set_ignored(query.message, bool(command[2]))
     # /start helper
     # Register user in bot
     elif command[0] == "start":
@@ -76,6 +83,10 @@ async def callback(query: CallbackQuery):
     # Set selective classes for yourself
     elif command[0] == "set_selecs":
         await qh.set_selecs(query, command)
+    # /set_ignored helper
+    # Set ignored classes for yourself
+    elif command[0] == "set_ignored":
+        await qh.set_ignored(query, command)
 
 
 
@@ -100,14 +111,17 @@ async def remind():
         return
     pair = PAIRS[datetime.now().hour]
     cur = conn.execute("SELECT id FROM users")
-    for id in cur.fetchall()[0]:
-        sched = get_schedule(id)
-        for c in sched[week][day]:
-            if c[0] == pair:
-                msg_text = "Через 5 хвилин почнеться пара\n"\
-                        f"{pair}. <a href='{c[3]}'>{c[1]} ({c[2]})</a>"
-                await bot.send_message(chat_id=id, text=msg_text, parse_mode=ParseMode.HTML)
-                break
+    for user_id in cur.fetchall():
+        # cuz fetschall() returns typle instead of single value
+        user_id = user_id[0]
+        sched = get_schedule(user_id)
+        name = sched[week][day][pair][0]
+        type = sched[week][day][pair][1]
+        link = sched[week][day][pair][2]
+        if not pair_is_ignored(user_id, week, day, pair):
+            msg_text = "Через 5 хвилин почнеться пара\n"\
+                    f"{pair}. <a href='{link}'>{name} ({type})</a>"
+            await bot.send_message(chat_id=user_id, text=msg_text, parse_mode=ParseMode.HTML)
 
 if __name__ == '__main__':
     # TODO

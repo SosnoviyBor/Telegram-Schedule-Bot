@@ -62,8 +62,8 @@ def get_schedule(id: int):
         classes[row[0]][row[1]][row[2]] = [row[3], row[4], row[5]]
     return classes
 
-def is_pair_ignored(id, week: str, day: str, pair: str):
-    cur = conn.execute(f"SELECT ignored FROM users WHERE id = {id}")
+def pair_is_ignored(user_id, week, day, pair):
+    cur = conn.execute(f"SELECT ignored FROM users WHERE id = {user_id}")
     # Result will look like "week,day,pair;week,day,pair;"
     raw = cur.fetchone()[0]
     if raw == None:
@@ -72,6 +72,6 @@ def is_pair_ignored(id, week: str, day: str, pair: str):
     tmp = tmp[:len(tmp)-1:]
     for i in tmp:
         ignored = i.split(",")
-        if ignored[0] == week and ignored[1] == day and ignored[2] == pair:
+        if (ignored[0] == str(week)) and (ignored[1] == str(day)) and (ignored[2] == str(pair)):
             return True
     return False

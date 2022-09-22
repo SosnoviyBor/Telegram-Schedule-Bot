@@ -7,7 +7,7 @@ from bot import bot
 from db import conn
 from utils.consts import *
 
-async def logoff(query: CallbackQuery, command):
+async def logoff(query: CallbackQuery, command: list):
     if command[1] == "true":
         conn.execute(f"DELETE FROM users WHERE id = {query.from_user.id}")
         conn.commit()

@@ -7,7 +7,7 @@ from bot import bot, callback
 from db import conn
 from utils.consts import *
 
-async def set_selecs(query: CallbackQuery, command):
+async def set_selecs(query: CallbackQuery, command: list):
     # my_selecs view <slot> <page>
     if command[1] == "view":
         command[2] = int(command[2])    # slot
