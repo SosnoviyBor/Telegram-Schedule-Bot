@@ -9,7 +9,7 @@ async def schedule(message: Message):
     classes = get_schedule(message.from_user.id)
     msg_text = ""
     for week in classes.keys():
-        if week == "week1":
+        if week == 1:
             msg_text += "<code>1 неділя</code>\n"
         else:
             msg_text += "\n<code>2 неділя</code>\n"

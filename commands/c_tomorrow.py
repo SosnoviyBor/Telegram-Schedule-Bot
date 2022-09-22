@@ -13,7 +13,7 @@ async def tomorrow(message: Message):
         # if day is fri, sat or sun display info for tue
         day = 2
     week = get_week()
-    if week == "week1":
+    if week == 1:
         msg_text = "<code>1 неділя</code>\n"
     else:
         msg_text = "<code>2 неділя</code>\n"

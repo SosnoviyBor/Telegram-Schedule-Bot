@@ -14,7 +14,7 @@ async def today(message: Message):
             "Але якщо ви хочете подивитися розклад на вівторок, клацніть <b>/tomorrow</b>", parse_mode=ParseMode.HTML)
         return
     week = get_week()
-    if week == "week1":
+    if week == 1:
         msg_text = "<code>1 неділя</code>\n"
     else:
         msg_text = "<code>2 неділя</code>\n"

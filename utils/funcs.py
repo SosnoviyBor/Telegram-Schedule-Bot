@@ -1,3 +1,6 @@
+import sys
+sys.path.append("../Telegram-Schedule-Bot")
+
 from aiogram.types import *
 from datetime import datetime
 
@@ -7,9 +10,9 @@ from utils.consts import *
 # You may need to swap return values' places depending on the year
 def get_week():
     if datetime.date(datetime(2010, 6, 16)).isocalendar().week % 2 == 1:
-        return "week1"
+        return 1
     else:
-        return "week2"
+        return 2
 
 def get_schedule(id: int):
     """
@@ -21,14 +24,15 @@ def get_schedule(id: int):
     }
     """
     classes = {
-        "week1":{
-            1:[], # day starting from monday
-            2:[],
+        1:{
+            #1:[], # day starting from monday
+            2:[],   # monday is ignored. uncomment if you have pairs this day
             3:[],
             4:[],
             5:[]
-        }, "week2":{
-            1:[],
+        },
+        2:{
+            #1:[],
             2:[],
             3:[],
             4:[],
@@ -41,7 +45,7 @@ def get_schedule(id: int):
     row = cur.fetchone()
     for value in row:
         if type(value) is int:
-            cur = conn.execute("SELECT 'week'||sc.week, sc.day, sc.pair, c.name, sc.type, sc.link "\
+            cur = conn.execute("SELECT sc.week, sc.day, sc.pair, c.name, sc.type, sc.link "\
                                 f"FROM selec_classes sc "\
                                 f"INNER JOIN classes c ON sc.class_id = c.id "\
                                 f"WHERE sc.class_id = {value}")
@@ -49,7 +53,7 @@ def get_schedule(id: int):
             classes[c[0]][c[1]].append([c[2], c[3], c[4], c[5]])
         elif type(value) is str:
             group = value.lower()
-    cur = conn.execute("SELECT 'week'||g.week, g.day, g.pair, c.name, g.type, g.link "\
+    cur = conn.execute("SELECT g.week, g.day, g.pair, c.name, g.type, g.link "\
                         f"FROM {group} g "\
                         "INNER JOIN classes c ON g.class_id = c.id")
     for row in cur:
@@ -59,3 +63,17 @@ def get_schedule(id: int):
         for day in classes[week].keys():
             classes[week][day].sort(key=lambda x: x[0])
     return classes
+
+def is_pair_ignored(id, week: str, day: str, pair: str):
+    cur = conn.execute(f"SELECT ignored FROM users WHERE id = {id}")
+    # Result will look like "week,day,pair;week,day,pair;"
+    raw = cur.fetchone()[0]
+    if raw == None:
+        return False
+    tmp = raw.split(";")
+    tmp = tmp[:len(tmp)-1:]
+    for i in tmp:
+        ignored = i.split(",")
+        if ignored[0] == week and ignored[1] == day and ignored[2] == pair:
+            return True
+    return False
