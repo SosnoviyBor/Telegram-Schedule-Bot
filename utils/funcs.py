@@ -25,18 +25,18 @@ def get_schedule(id: int):
     """
     classes = {
         1:{
-            #1:[], # day starting from monday
-            2:[],   # monday is ignored. uncomment if you have pairs this day
-            3:[],
-            4:[],
-            5:[]
+            #1:{}}, # day starting from monday
+            2:{},   # monday is ignored. uncomment if you have pairs this day
+            3:{},
+            4:{},
+            5:{}
         },
         2:{
-            #1:[],
-            2:[],
-            3:[],
-            4:[],
-            5:[]
+            #1:{},
+            2:{},
+            3:{},
+            4:{},
+            5:{}
         }
     }
     # Adding selective classes
@@ -50,18 +50,16 @@ def get_schedule(id: int):
                                 f"INNER JOIN classes c ON sc.class_id = c.id "\
                                 f"WHERE sc.class_id = {value}")
             c = cur.fetchone()
-            classes[c[0]][c[1]].append([c[2], c[3], c[4], c[5]])
+            # classes[week][day][pair] = [name, type, link]
+            classes[c[0]][c[1]][c[2]] = [c[3], c[4], c[5]]
         elif type(value) is str:
             group = value.lower()
     cur = conn.execute("SELECT g.week, g.day, g.pair, c.name, g.type, g.link "\
                         f"FROM {group} g "\
                         "INNER JOIN classes c ON g.class_id = c.id")
     for row in cur:
-        classes[row[0]][row[1]].append([row[2], row[3], row[4], row[5]])
-    # Sorting classes in each day by order
-    for week in classes.keys():
-        for day in classes[week].keys():
-            classes[week][day].sort(key=lambda x: x[0])
+        # classes[week][day][pair] = [name, type, link]
+        classes[row[0]][row[1]][row[2]] = [row[3], row[4], row[5]]
     return classes
 
 def is_pair_ignored(id, week: str, day: str, pair: str):
