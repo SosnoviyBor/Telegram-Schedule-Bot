@@ -15,3 +15,10 @@ def is_admin(message: Message):
     if message.from_user.id in config.admins:
         return True
     return False
+
+def is_registered(message: Message):
+    users = conn.execute("SELECT id FROM users").fetchall()
+    id = (message.from_user.id,)
+    if id in users:
+        return True
+    return False

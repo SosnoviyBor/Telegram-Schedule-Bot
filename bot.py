@@ -32,23 +32,24 @@ async def start(message: Message):
 async def help(message: Message):
     await c.help(message)
 
-@dp.message_handler(commands=['set_selecs'])
+@dp.message_handler(acl.is_registered, commands=['set_selecs'])
 async def set_selecs(message: Message, edit_flag=False):
     await c.set_selecs(message, edit_flag)
 
-@dp.message_handler(commands=['logoff'])
+@dp.message_handler(acl.is_registered, commands=['logoff'])
 async def logoff(message: Message):
     await c.logoff(message)
 
-@dp.message_handler(commands=['schedule'])
+# TODO for next 3 commands add ignored highlights
+@dp.message_handler(acl.is_registered, commands=['schedule'])
 async def schedule(message: Message):
     await c.schedule(message)
 
-@dp.message_handler(commands=['today'])
+@dp.message_handler(acl.is_registered, commands=['today'])
 async def today(message: Message):
     await c.today(message)
 
-@dp.message_handler(commands=['tomorrow'])
+@dp.message_handler(acl.is_registered, commands=['tomorrow'])
 async def tomorrow(message: Message):
     await c.tomorrow(message)
 
