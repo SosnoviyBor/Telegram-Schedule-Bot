@@ -5,10 +5,7 @@ import aioschedule
 import logging
 from datetime import datetime
 
-try:
-    import config_local as config
-except:
-    import config
+import config
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.token)
 dp = Dispatcher(bot)
