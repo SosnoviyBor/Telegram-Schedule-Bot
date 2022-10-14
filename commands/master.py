@@ -9,3 +9,4 @@ from c_schedule import *
 from c_today import *
 from c_tomorrow import *
 from c_set_ignored import *
+from c_say import *

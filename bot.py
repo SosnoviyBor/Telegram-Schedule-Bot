@@ -1,27 +1,24 @@
-from email import message
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import *
 import asyncio
 import aioschedule
 import logging
+from datetime import datetime
+
+try:
+    import config_local as config
+except:
+    import config
+logging.basicConfig(level=logging.INFO)
+bot = Bot(token=config.token)
+dp = Dispatcher(bot)
 
 import commands.master as c
 import query_handler.master as qh
 import acl
 from db import *
 from utils.consts import *
-try:
-    import config_local as config
-except:
-    import config
-
-# TODO. Delete on release
 from utils.funcs import *
-from datetime import datetime
-
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=config.token)
-dp = Dispatcher(bot)
 
 """ ########################################## Command handlers ########################################## """
 
@@ -41,7 +38,6 @@ async def set_selecs(message: Message, edit_flag=False):
 async def logoff(message: Message):
     await c.logoff(message)
 
-# TODO for next 3 commands add ignored highlights
 @dp.message_handler(acl.is_registered, commands=['schedule'])
 async def schedule(message: Message):
     await c.schedule(message)
@@ -55,8 +51,28 @@ async def tomorrow(message: Message):
     await c.tomorrow(message)
 
 @dp.message_handler(acl.is_registered, commands=['set_ignored'])
-async def set_ignored(message: Message, edit_flag=False):
+async def set_ignored(message: Message):
     await c.set_ignored(message)
+
+say_params = {
+    "flag": False,  # Should bot read next message?
+    "msg_id": -1,
+    "admin_id": -1
+}
+@dp.message_handler(acl.is_admin, commands=['say'])
+async def say(message: Message):
+    sent_message = await c.say(message)
+    say_params["flag"] = True
+    say_params["msg_id"] = sent_message.message_id
+    say_params["admin_id"] = message.chat.id
+
+@dp.message_handler(lambda _: say_params["flag"],
+                    lambda message: message.chat.id == say_params["admin_id"])
+async def say_helper(message: Message):
+    await c.say_helper(message, bot, say_params)
+    say_params["flag"] = False
+    say_params["id"] = -1
+    say_params["admin_id"] = -1
 
 """ ########################################## Callback query handler ########################################## """
 
@@ -87,8 +103,16 @@ async def callback(query: CallbackQuery):
     # Set ignored classes for yourself
     elif command[0] == "set_ignored":
         await qh.set_ignored(query, command)
+    #/say helper
+    # Display message for all users
+    elif command[0] == "say":
+        if command[1] == "exit":
+            say_params["flag"] = False
+            say_params["id"] = -1
+            say_params["admin_id"] = -1
+            await query.message.delete()
 
-
+""" ########################################## Initialization things ########################################## """
 
 async def on_startup(_):
     asyncio.create_task(scheduler())
@@ -124,8 +148,4 @@ async def remind():
             await bot.send_message(chat_id=user_id, text=msg_text, parse_mode=ParseMode.HTML)
 
 if __name__ == '__main__':
-    # TODO
-    # add functionality to ignore certain class (depending on week, day and pair)
-    # admin ability to send global messages
-    # ask for ideas for admin commands
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
