@@ -17,7 +17,7 @@ async def set_ignored(query: CallbackQuery, command: list):
             buttons.append(InlineKeyboardButton(text=INT2EMOJI[i], callback_data=f"set_ignored {command[1]} {i}"))
         ikm = InlineKeyboardMarkup(row_width=4)
         ikm.add(*buttons)
-        ikm.add(InlineKeyboardButton(text="❌", callback_data="func set_ignored True"))
+        ikm.add(InlineKeyboardButton(text="❌ Закрити", callback_data="func set_ignored True"))
         await bot.edit_message_text(chat_id=query.from_user.id,
             message_id=query.message.message_id, text=msg_text, reply_markup=ikm)
     # Week and day was set
@@ -41,7 +41,7 @@ async def set_ignored(query: CallbackQuery, command: list):
             buttons.append(InlineKeyboardButton(text=INT2EMOJI[id], callback_data=callback_data))
         ikm = InlineKeyboardMarkup(row_width=6)
         ikm.add(*buttons)
-        ikm.add(InlineKeyboardButton(text="❌", callback_data=query.data[:-2:]))
+        ikm.add(InlineKeyboardButton(text="❌ Закрити", callback_data=query.data[:-2:]))
         await bot.edit_message_text(chat_id=query.from_user.id, message_id=query.message.message_id,
             text=msg_text, reply_markup=ikm, parse_mode=ParseMode.HTML)
     # set_ignored <add/rm> <week> <day> <pair>

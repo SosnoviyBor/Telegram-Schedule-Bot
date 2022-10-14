@@ -7,11 +7,11 @@ from aiogram import Bot
 from utils.funcs import *
 
 async def say(message: Message):
-    msg_text = "Для того, щоб трансювати ваше повідомлення усім користувачам, відправте його відповіддю на це\n"\
+    msg_text = "Для того, щоб транслювати ваше повідомлення усім користувачам, відправте його відповіддю на це\n"\
                 "\n"\
                 "Якщо ви передумали його відправляти, натисніть ❌"
     ikm = InlineKeyboardMarkup(row_width=1)
-    ikm.add(InlineKeyboardButton("❌", callback_data="say exit"))
+    ikm.add(InlineKeyboardButton("❌ Закрити", callback_data="say exit"))
     return await message.answer(msg_text, reply_markup=ikm)
 
 async def say_helper(message: Message, bot:Bot, say_params: dict):

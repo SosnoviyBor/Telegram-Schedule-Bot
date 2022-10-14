@@ -30,11 +30,11 @@ async def start(message: Message):
 async def help(message: Message):
     await c.help(message)
 
-@dp.message_handler(acl.is_registered, commands=['set_selecs'])
+@dp.message_handler(acl.is_registered, acl.is_dm, commands=['set_selecs'])
 async def set_selecs(message: Message, edit_flag=False):
     await c.set_selecs(message, edit_flag)
 
-@dp.message_handler(acl.is_registered, commands=['logoff'])
+@dp.message_handler(commands=['logoff'])
 async def logoff(message: Message):
     await c.logoff(message)
 
@@ -50,7 +50,7 @@ async def today(message: Message):
 async def tomorrow(message: Message):
     await c.tomorrow(message)
 
-@dp.message_handler(acl.is_registered, commands=['set_ignored'])
+@dp.message_handler(acl.is_registered, acl.is_dm, commands=['set_ignored'])
 async def set_ignored(message: Message):
     await c.set_ignored(message)
 
