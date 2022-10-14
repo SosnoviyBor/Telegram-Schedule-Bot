@@ -32,7 +32,7 @@ async def set_ignored(query: CallbackQuery, command: list):
         for id in sched[week][day].keys():
             name = sched[week][day][id][0]
             type = sched[week][day][id][1]
-            if is_pair_ignored(query.from_user.id, week, day, id):
+            if pair_is_ignored(query.from_user.id, week, day, id):
                 msg_text += f"\n{id}. <s>{name} ({type})</s>"
                 callback_data=f"set_ignored rm {week} {day} {id}"
             else:

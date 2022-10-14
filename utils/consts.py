@@ -1,12 +1,22 @@
+from db import *
+
 # All selective classes
+# Filled on startup
 ALL_SC = {
     "id": [],
     "name": []
 }
+__cur = conn.execute("SELECT sc.class_id, c.name \
+                    FROM selec_classes sc\
+                    INNER JOIN classes c \
+                    ON sc.class_id = c.id")
+for row in __cur:
+    ALL_SC["id"].append(row[0])
+    ALL_SC["name"].append(row[1])
 
 # All groups
 # For increased user scope it should be moved to db (probbly)
-ALL_GROUPS = ["IT01", "IT02", "IT03", "IT04"]
+ALL_GROUPS = ["IT03"]
 
 DAYS = {
     1:"Понеділок",
