@@ -19,7 +19,10 @@ def get_schedule(id: int):
     Returns next type of dictionary\n
     schedule {
         week : {
-            day : [ [pair, name, type, link], ...]
+            day : {
+                pair: [name, type, link],
+                pair: ...
+            }
         }
     }
     """

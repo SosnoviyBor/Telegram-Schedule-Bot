@@ -22,7 +22,7 @@ async def schedule(message: Message):
                 type = sched[week][day][id][1]
                 link = sched[week][day][id][2]
                 if pair_is_ignored(message.from_user.id, week, day, id):
-                    msg_text += f"{id}. <s><a href='{link}'>{name} ({type})</a></s>\n"
+                    msg_text += f"{id}. <span class='tg-spoiler'><a href='{link}'>{name} ({type})</a></span>\n"
                 else:
                     msg_text += f"{id}. <a href='{link}'>{name} ({type})</a>\n"
 
