@@ -23,7 +23,8 @@ async def set_selecs(query: CallbackQuery, command: list):
         if picked_classes[command[2]-1] == None:
             picked_class_curr = 'Ще не вибрано ❌'
         else:
-            picked_class_curr = f"<u>{ALL_SC['name'][int(picked_classes[command[2]-1])-1]}</u> ✅"
+            i = ALL_SC["id"].index(picked_classes[command[2]-1])
+            picked_class_curr = f"<u>{ALL_SC['name'][i]}</u> ✅"
         msg_text = f"Предмет №{command[2]}:  {picked_class_curr}\n\n"
         for rel_id in range(10):           # sc id on page
             abs_id = rel_id+1*command[3]   # sc id in ALL_SC

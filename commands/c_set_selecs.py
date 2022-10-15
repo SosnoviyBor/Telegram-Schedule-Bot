@@ -32,4 +32,8 @@ def set_selecs_b(sc):
 
 # message text shortcut
 def set_selecs_m(sc):
-    return ALL_SC['name'][sc-1] if sc is not None else 'Відсутній'
+    if sc is None:
+        return 'Відсутній'
+    else:
+        i = ALL_SC["id"].index(sc)
+        return ALL_SC["name"][i]

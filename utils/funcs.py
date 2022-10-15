@@ -49,9 +49,9 @@ def get_schedule(id: int):
                                 f"FROM selec_classes sc "\
                                 f"INNER JOIN classes c ON sc.class_id = c.id "\
                                 f"WHERE sc.class_id = {value}")
-            c = cur.fetchone()
-            # classes[week][day][pair] = [name, type, link]
-            classes[c[0]][c[1]][c[2]] = [c[3], c[4], c[5]]
+            for c in cur:
+                # classes[week][day][pair] = [name, type, link]
+                classes[c[0]][c[1]][c[2]] = [c[3], c[4], c[5]]
         elif type(value) is str:
             group = value.lower()
     cur = conn.execute("SELECT g.week, g.day, g.pair, c.name, g.type, g.link "\
