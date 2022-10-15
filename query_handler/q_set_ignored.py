@@ -60,15 +60,14 @@ async def set_ignored(query: CallbackQuery, command: list):
                     f"SET ignored = '{curr_ignored}' "\
                     f"WHERE id = {query.from_user.id}")
         conn.commit()
-        
+
         sched = get_schedule(query.from_user.id)
         if command[1] == "add":
             msg_text = "Тепер ви <b>ігноруєте</b> наступний предмет:\n\n"
         else:
             msg_text = "Для наступного предмету були знову <b>вімкнуті</b> повідомлення:\n\n"
-        for id in sched[week][day].keys():
-            name = sched[week][day][id][0]
-            type = sched[week][day][id][1]
+        name = sched[week][day][pair][0]
+        type = sched[week][day][pair][1]
         msg_text += f"Назва: {name} ({type})\n"\
                     f"Тиждень: {week}\n"\
                     f"День: {day}\n"\
